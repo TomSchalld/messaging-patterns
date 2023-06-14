@@ -20,8 +20,9 @@ public class CalculationEntity {
     private Action action;
 
     private String correlationID;
+    private int result;
 
-    public CalculationEntity(int left, int right, Action action,String correlationID) {
+    public CalculationEntity(int left, int right, Action action, String correlationID) {
         this.left = left;
         this.right = right;
         this.action = action;
@@ -70,5 +71,13 @@ public class CalculationEntity {
 
     public void setCorrelationID(String correlationID) {
         this.correlationID = correlationID;
+    }
+
+    public void setResult(int result) {
+        this.result = result;
+    }
+
+    public int getResult() {
+        return result;
     }
 }
