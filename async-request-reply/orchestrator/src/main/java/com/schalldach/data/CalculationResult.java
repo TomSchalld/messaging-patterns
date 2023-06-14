@@ -8,12 +8,23 @@ public class CalculationResult implements Serializable {
 
     @Serial
     private static final long serialVersionUID = -8379464842428010834L;
-    private final int result;
-    private final String correlationID;
+    private int result;
+    private String correlationID;
 
 
     public CalculationResult(int result, String correlationID) {
         this.result = result;
+        this.correlationID = correlationID;
+    }
+
+    public CalculationResult() {
+    }
+
+    public void setResult(int result) {
+        this.result = result;
+    }
+
+    public void setCorrelationID(String correlationID) {
         this.correlationID = correlationID;
     }
 

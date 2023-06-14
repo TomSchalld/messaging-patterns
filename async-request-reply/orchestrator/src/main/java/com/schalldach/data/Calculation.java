@@ -5,7 +5,7 @@ import com.schalldach.service.Action;
 import java.io.Serial;
 import java.io.Serializable;
 
-public class Calulation implements Serializable{
+public class Calculation implements Serializable{
 
 
     @Serial
@@ -14,7 +14,9 @@ public class Calulation implements Serializable{
     private final int right;
     private final Action action;
 
-    public Calulation(int left, int right, Action action) {
+    private String correlationID;
+
+    public Calculation(int left, int right, Action action) {
         this.left = left;
         this.right = right;
         this.action = action;
@@ -30,6 +32,14 @@ public class Calulation implements Serializable{
 
     public Action getAction() {
         return action;
+    }
+
+    public void setCorrelationID(String correlationID) {
+        this.correlationID = correlationID;
+    }
+
+    public String getCorrelationID() {
+        return correlationID;
     }
 
     @Override

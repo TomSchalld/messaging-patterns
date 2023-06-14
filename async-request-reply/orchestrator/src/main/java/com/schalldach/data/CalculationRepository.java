@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CalculationRepository extends CrudRepository<CalculationEntity,Long> {
 
-    CalculationEntity findByCorrelationID(String correlationID);
+    CalculationEntity findByCorrelationID(String correlationId);
 
 
 }

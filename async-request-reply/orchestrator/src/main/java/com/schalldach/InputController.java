@@ -2,7 +2,7 @@ package com.schalldach;
 
 import com.schalldach.data.FirstReply;
 import com.schalldach.service.CalculationService;
-import com.schalldach.data.Calulation;
+import com.schalldach.data.Calculation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +20,9 @@ public class InputController {
 
 
     @PostMapping
-    public ResponseEntity<FirstReply> calculate(@RequestBody Calulation calulation){
-        LOGGER.info(calulation.toString());
-        final String correlationId = calculationService.calculate(calulation);
+    public ResponseEntity<FirstReply> calculate(@RequestBody Calculation calculation){
+        LOGGER.info(calculation.toString());
+        final String correlationId = calculationService.calculate(calculation);
         return ResponseEntity.accepted().body(new FirstReply(correlationId, 0));
     }
 

@@ -1,9 +1,9 @@
 package com.schalldach.message;
 
-import com.schalldach.data.Calulation;
+import com.schalldach.data.Calculation;
 
 public interface MessageDispatcher {
 
 
-    void send(Calulation calculation);
+    void send(Calculation calculation);
 }
