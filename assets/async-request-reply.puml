@@ -1,0 +1,31 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+!pragma teoz true
+autonumber
+participant ac as "Async Client"
+participant oa as "Orchestration API"
+database db as "Database"
+queue reqQ as "Request Queue"
+participant me as "Math Engine"
+queue resQ as "Response Queue"
+
+
+
+ac -> oa: HTTP POST ({number_1,number_2, action})
+oa -> oa: Generate correlationId
+oa ->o db: persist ({number_1,number_2, action, correlationId})
+oa -> reqQ: Send Request ({number_1,number_2, action, correlationId})
+{start} oa -> ac:  HTTP 202 Accepted
+note right: Location header and retry-after headers\nare set so that the client can start polling
+
+reqQ -> me: ({number_1,number_2, action, correlationId})
+me -> me: calculate (number_1,number_2, action)
+me -> resQ: ({result, correlationId})
+ac --> oa: check status
+resQ -> oa: ({result, correlationId})
+oa ->o db: persist ({result, correlationId})
+{stop} oa->ac: HTTP 302 Found + redirect
+{start} <-> {stop}: polling
+
+
+@enduml

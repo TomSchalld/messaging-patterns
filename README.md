@@ -5,3 +5,7 @@ Ideally these services are connected in a loosely coupled manner, which helps to
 
 In this repository I am attempting to recreate a few popular patterns based on Spring Boot and ActiveMQ.
 
+
+Currently available implementations are:
+ - [async request reply](async-request-reply)
+
