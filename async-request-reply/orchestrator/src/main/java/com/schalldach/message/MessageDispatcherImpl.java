@@ -17,8 +17,6 @@ public class MessageDispatcherImpl implements MessageDispatcher {
     @Autowired
     private JmsTemplate jmsTemplate;
 
-    @Autowired
-    private ObjectMapper objectMapper;
 
 
     @Override

@@ -1,0 +1,57 @@
+# Create Namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: db
+  labels:
+    app.kubernetes.io/name: hsqldb
+---
+#Deployment
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hsqldb
+  namespace: db
+  labels:
+    app.kubernetes.io/name: hsqldb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: hsqldb
+  template:
+    metadata:
+      name: hsqldb
+      labels:
+        app.kubernetes.io/name: hsqldb
+    spec:
+      containers:
+        - name: hsqldb
+          image: mitchtalmadge/hsqldb
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: HSQLDB_USER
+              value: "sa"
+            - name: HSQLDB_PASSWORD
+              value: "password"
+            - name: HSQLDB_DATABASE_ALIAS
+              value: "db"
+      restartPolicy: Always
+---
+#Service definitioin
+
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: db
+  name: db-svc
+spec:
+  selector:
+    app.kubernetes.io/name: hsqldb
+  ports:
+    - protocol: TCP
+      name: jdbc
+      port: 9001
+      targetPort: 9001
+  type: ClusterIP

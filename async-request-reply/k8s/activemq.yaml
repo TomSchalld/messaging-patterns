@@ -1,0 +1,75 @@
+# Create Namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: amq
+  labels:
+    app.kubernetes.io/name: amq
+---
+# Create Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: amq
+  namespace: amq
+  labels:
+    app.kubernetes.io/name: amq
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: amq
+  template:
+    metadata:
+      name: amq
+      labels:
+          app.kubernetes.io/name: amq
+    spec:
+      containers:
+        - name: amq
+          image: rmohr/activemq:5.15.9
+          resources:
+            requests:
+              cpu: 100m
+              memory: 250Mi
+            limits:
+              cpu: 1250m
+              memory: 1250Mi
+#          ports:
+#            - containerPort: 61616
+#            - containerPort: 8161
+          imagePullPolicy: IfNotPresent
+      restartPolicy: Always
+---
+# service definition
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: amq-svc
+  namespace: amq
+spec:
+  selector:
+    app.kubernetes.io/name: amq
+  ports:
+    - name: dashboard
+      port: 8161
+      targetPort: 8161
+      protocol: TCP
+    - name: openwire
+      port: 61616
+      targetPort: 61616
+      protocol: TCP
+    - name: amqp
+      port: 5672
+      targetPort: 5672
+      protocol: TCP
+    - name: stomp
+      port: 61613
+      targetPort: 61613
+      protocol: TCP
+    - name: mqtt
+      port: 1883
+      targetPort: 1883
+      protocol: TCP
+  type: ClusterIP
