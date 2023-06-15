@@ -1,10 +1,10 @@
 package com.schalldach.service;
 
 
+import com.schalldach.data.Calculation;
 import com.schalldach.data.CalculationEntity;
 import com.schalldach.data.CalculationRepository;
 import com.schalldach.data.CalculationResult;
-import com.schalldach.data.Calculation;
 import com.schalldach.message.MessageDispatcher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,6 +34,21 @@ public class CalculationServiceImpl implements CalculationService {
     public void storeResult(CalculationResult result) {
         final CalculationEntity calculationTask = calculationRepository.findByCorrelationID(result.getCorrelationID());
         calculationTask.setResult(result.getResult());
+    }
+
+    @Override
+    public boolean hasResult(String correlationID) {
+        final CalculationEntity calculation = calculationRepository.findByCorrelationID(correlationID);
+        return calculation != null && calculation.getResult() != null;
+    }
+
+    @Override
+    public CalculationResult getResult(String correlationID) {
+        final CalculationEntity calculation = calculationRepository.findByCorrelationID(correlationID);
+        if (calculation == null || calculation.getResult() == null) {
+            return null;
+        }
+        return new CalculationResult(calculation.getResult(), correlationID);
     }
 
     private CalculationEntity toEntity(Calculation calculation) {
