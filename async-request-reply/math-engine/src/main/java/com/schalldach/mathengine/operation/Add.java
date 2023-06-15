@@ -20,6 +20,7 @@ public class Add implements MathematicalOperation, MessageReceiver {
 
     @Autowired
     private JmsTemplate jmsTemplate;
+
     @Value("${orchestrator.reply.queue}")
     private String replyQueue;
 
