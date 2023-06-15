@@ -11,18 +11,21 @@ public class CalculationEntity {
 
     @Id
     @GeneratedValue
-    private long id;
+    private Long id;
     @Column(name = "LEFT_SIDE")
-    private int left;
+    private Integer left;
     @Column(name = "RIGHT_SIDE")
 
-    private int right;
+    private Integer right;
+    @Column(name = "ACTION", nullable = false)
     private Action action;
 
+    @Column(name = "CORRELATION_ID",nullable = true)
     private String correlationID;
-    private int result;
+    @Column(name = "RESULT",nullable = true)
+    private Integer result;
 
-    public CalculationEntity(int left, int right, Action action, String correlationID) {
+    public CalculationEntity(Integer left, Integer right, Action action, String correlationID) {
         this.left = left;
         this.right = right;
         this.action = action;
@@ -41,19 +44,19 @@ public class CalculationEntity {
         this.id = id;
     }
 
-    public int getLeft() {
+    public Integer getLeft() {
         return left;
     }
 
-    public void setLeft(int left) {
+    public void setLeft(Integer left) {
         this.left = left;
     }
 
-    public int getRight() {
+    public Integer getRight() {
         return right;
     }
 
-    public void setRight(int right) {
+    public void setRight(Integer right) {
         this.right = right;
     }
 
@@ -73,11 +76,11 @@ public class CalculationEntity {
         this.correlationID = correlationID;
     }
 
-    public void setResult(int result) {
+    public void setResult(Integer result) {
         this.result = result;
     }
 
-    public int getResult() {
+    public Integer getResult() {
         return result;
     }
 }
