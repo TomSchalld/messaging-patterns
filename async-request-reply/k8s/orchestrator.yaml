@@ -1,0 +1,78 @@
+# Create Namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: orchestrator
+  labels:
+    app.kubernetes.io/name: orchestrator
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orchestrator
+  namespace: orchestrator
+  labels:
+    app.kubernetes.io/name: orchestrator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: orchestrator
+  template:
+    metadata:
+      name: orchestrator
+      labels:
+        app.kubernetes.io/name: orchestrator
+    spec:
+      containers:
+        - name: orchestrator
+          image: tomscha/math-orchestrator
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              cpu: 650m
+              memory: 150Mi
+            limits:
+              cpu: 950m
+              memory: 650Mi
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:hsqldb:hsql://db-svc.db.svc.cluster.local:9001/db
+            - name: SPRING_ACTIVEMQ_BROKER_URL
+              value: tcp://amq-svc.amq.svc.cluster.local:61616
+      restartPolicy: Always
+---
+# service definition
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: orchestrator-svc
+  namespace: orchestrator
+spec:
+  selector:
+    app.kubernetes.io/name: orchestrator
+  ports:
+    - name: dashboard
+      port: 8080
+      targetPort: 8080
+      protocol: TCP
+  type: LoadBalancer
+
+---
+
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: orchestrator-hpa
+  namespace: orchestrator
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: orchestrator
+  minReplicas: 1
+  maxReplicas: 1
+  targetCPUUtilizationPercentage: 50
+
