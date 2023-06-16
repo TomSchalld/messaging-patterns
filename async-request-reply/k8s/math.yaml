@@ -42,6 +42,8 @@ spec:
               value: "add"
             - name: SPRING_ACTIVEMQ_BROKER_URL
               value: tcp://amq-svc.amq.svc.cluster.local:61616
+            - name: MATH_ENGINE_DELAY
+              value: "3000"
       restartPolicy: Always
 
 ---
