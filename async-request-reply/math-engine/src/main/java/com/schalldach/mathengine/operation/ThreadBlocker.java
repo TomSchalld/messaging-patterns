@@ -14,12 +14,13 @@ public class ThreadBlocker {
     @Value("${math.engine.delay:-1}")
     private int delay;
 
-    public void block(){
+    public void block() {
         if (delay > 0) {
             try {
+                LOGGER.info("Blocking Thread for [{}]ms", delay);
                 Thread.sleep(delay);
             } catch (InterruptedException e) {
-                LOGGER.error("Failure during sleep",e);
+                LOGGER.error("Failure during sleep", e);
             }
         }
     }
