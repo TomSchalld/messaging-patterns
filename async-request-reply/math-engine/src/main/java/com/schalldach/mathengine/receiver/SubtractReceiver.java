@@ -1,9 +1,9 @@
-package com.schalldach.mathengine.operation;
+package com.schalldach.mathengine.receiver;
 
 import com.schalldach.mathengine.MessageReceiver;
-import com.schalldach.mathengine.data.Action;
 import com.schalldach.mathengine.data.CalculationRequest;
 import com.schalldach.mathengine.data.CalculationResult;
+import com.schalldach.mathengine.operation.ThreadBlocker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,37 +11,30 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.jms.core.JmsTemplate;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
-@Profile({"sub","all"})
-public class Sub implements MathematicalOperation, MessageReceiver {
+@Service
+@Profile({"sub", "all"})
+public class SubtractReceiver implements MessageReceiver {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Sub.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SubtractReceiver.class);
+
 
     @Autowired
     private JmsTemplate jmsTemplate;
 
+    @Autowired
+    private ThreadBlocker threadBlocker;
+
     @Value("${orchestrator.reply.queue}")
     private String replyQueue;
-    @Override
-    public int calculate(int left, int right) {
-        return left-right;
-    }
 
-
-    @Override
-    public Action getAction() {
-        return Action.SUBTRACT;
-    }
-
-
-
-    @JmsListener(destination = "calc.q.in.sub")
+    @JmsListener(destination = "${orchestrator.sub.queue}")
     @Override
     public void receive(CalculationRequest request) {
         LOGGER.info("Received calculation request: {}",request);
-        final int result = calculate(request.getLeft(), request.getRight());
+        final int result = request.getAction().calculate(request.getLeft(), request.getRight());
+        threadBlocker.block();
         jmsTemplate.convertAndSend(replyQueue, new CalculationResult(result, request.getCorrelationID()));
         LOGGER.info("Answer send ");
     }
