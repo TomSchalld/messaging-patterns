@@ -1,0 +1,76 @@
+# Create Namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: synchronizer
+  labels:
+    app.kubernetes.io/name: synchronizer
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: synchronizer
+  namespace: synchronizer
+  labels:
+    app.kubernetes.io/name: synchronizer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: synchronizer
+  template:
+    metadata:
+      name: synchronizer
+      labels:
+        app.kubernetes.io/name: synchronizer
+    spec:
+      containers:
+        - name: synchronizer
+          image: tomscha/math-synchronizer
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              cpu: 650m
+              memory: 150Mi
+            limits:
+              cpu: 950m
+              memory: 650Mi
+          env:
+            - name: ORCHESTRATOR_URL
+              value: http://orchestrator-svc.orchestrator.svc.cluster.local:8080
+      restartPolicy: Always
+---
+# service definition
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: synchronizer-svc
+  namespace: synchronizer
+spec:
+  selector:
+    app.kubernetes.io/name: synchronizer
+  ports:
+    - name: dashboard
+      port: 8080
+      targetPort: 8080
+      protocol: TCP
+  type: LoadBalancer
+
+---
+
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: synchronizer-hpa
+  namespace: synchronizer
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: synchronizer
+  minReplicas: 1
+  maxReplicas: 1
+  targetCPUUtilizationPercentage: 50
+

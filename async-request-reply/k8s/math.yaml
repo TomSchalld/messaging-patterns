@@ -1,0 +1,220 @@
+# Create Namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: math
+  labels:
+    app.kubernetes.io/name: math
+
+---
+### Deployment for mathematical add operation
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: add
+  namespace: math
+  labels:
+    app.kubernetes.io/name: add
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: add
+  template:
+    metadata:
+      name: add
+      labels:
+        app.kubernetes.io/name: add
+    spec:
+      containers:
+        - name: math
+          image: tomscha/math-engine:1.0.0-alpine
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              cpu: 100m
+              memory: 150Mi
+            limits:
+              cpu: 500m
+              memory: 650Mi
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "add"
+            - name: SPRING_ACTIVEMQ_BROKER_URL
+              value: tcp://amq-svc.amq.svc.cluster.local:61616
+            - name: MATH_ENGINE_DELAY
+              value: "3000"
+      restartPolicy: Always
+
+---
+### Deployment for mathematical sub operation
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sub
+  namespace: math
+  labels:
+    app.kubernetes.io/name: sub
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: sub
+  template:
+    metadata:
+      name: sub
+      labels:
+        app.kubernetes.io/name: sub
+    spec:
+      containers:
+        - name: math
+          image: tomscha/math-engine:1.0.0-alpine
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              cpu: 100m
+              memory: 150Mi
+            limits:
+              cpu: 500m
+              memory: 650Mi
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "sub"
+            - name: SPRING_ACTIVEMQ_BROKER_URL
+              value: tcp://amq-svc.amq.svc.cluster.local:61616
+      restartPolicy: Always
+
+---
+### Deployment for mathematical divide operation
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: divide
+  namespace: math
+  labels:
+    app.kubernetes.io/name: divide
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: divide
+  template:
+    metadata:
+      name: divide
+      labels:
+        app.kubernetes.io/name: divide
+    spec:
+      containers:
+        - name: math
+          image: tomscha/math-engine:1.0.0-alpine
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              cpu: 100m
+              memory: 150Mi
+            limits:
+              cpu: 500m
+              memory: 650Mi
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "divide"
+            - name: SPRING_ACTIVEMQ_BROKER_URL
+              value: tcp://amq-svc.amq.svc.cluster.local:61616
+      restartPolicy: Always
+
+---
+### Deployment for mathematical multi operation
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: multi
+  namespace: math
+  labels:
+    app.kubernetes.io/name: multi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: multi
+  template:
+    metadata:
+      name: multi
+      labels:
+        app.kubernetes.io/name: multi
+    spec:
+      containers:
+        - name: math
+          image: tomscha/math-engine:1.0.0-alpine
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              cpu: 100m
+              memory: 150Mi
+            limits:
+              cpu: 500m
+              memory: 650Mi
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "multi"
+            - name: SPRING_ACTIVEMQ_BROKER_URL
+              value: tcp://amq-svc.amq.svc.cluster.local:61616
+      restartPolicy: Always
+---
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: multi-hpa
+  namespace: math
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: multi
+  minReplicas: 1
+  maxReplicas: 1
+  targetCPUUtilizationPercentage: 50
+
+---
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: add-hpa
+  namespace: math
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: add
+  minReplicas: 1
+  maxReplicas: 1
+  targetCPUUtilizationPercentage: 50
+
+---
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: sub-hpa
+  namespace: math
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: sub
+  minReplicas: 1
+  maxReplicas: 1
+  targetCPUUtilizationPercentage: 50
+
+---
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: divide-hpa
+  namespace: math
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: divide
+  minReplicas: 1
+  maxReplicas: 1
+  targetCPUUtilizationPercentage: 50
