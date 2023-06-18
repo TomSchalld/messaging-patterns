@@ -8,4 +8,5 @@ In this repository I am attempting to recreate a few popular patterns based on S
 
 Currently available implementations are:
  - [async request reply](async-request-reply)
+    -  detailed analysis can be found in [my blog](https://thomas.schalldach.com/posts/async-request-reply/)
 
